@@ -1,9 +1,10 @@
-function Branch(begin, end) {
+function Branch(begin, end, parent) {
 	this.begin = begin;
 	this.end = end;
-	this.finished = false;
+	this.lengthFactor = 0.8;
 
 	this.subBranches = new Array();
+	this.parent = parent;
 
 	this.show = function() {
 		stroke(255);
@@ -11,17 +12,16 @@ function Branch(begin, end) {
 		for(var subbranch of this.subBranches){
 			subbranch.show();
 		}
-	}
+	};
 
 	this.generate = function(subBranchAmount){
 		for(var i = 1; i <=subBranchAmount;i++){
 			var rotateAngle = this.getRotateAngle(i, subBranchAmount);
-			
 			var dir = p5.Vector.sub(this.end, this.begin);
 			dir.rotate(rotateAngle);
-			dir.mult(0.67);
+			dir.mult(this.lengthFactor);
 			var newEnd = p5.Vector.add(this.end, dir);
-			this.subBranches.push(new Branch(this.end, newEnd));
+			this.subBranches.push(new Branch(this.end, newEnd, this));
 		}
 		return this.subBranches;
 	};

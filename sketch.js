@@ -1,39 +1,19 @@
-
 var roots;
 var lastGeneratedBranches;
 var mid;
 
-var btnNewBranch, btnClear;
-var sldBranches, sldStartLength, sldRootAmount;
+var btnNewBranch, sldBranches;
+var btnClear, sldStartLength, sldRootAmount;
+var controlClass = "control-default";
+var containerClass = "control-container";
 
 function setup() {
 	var factor = 0.7;
 	createCanvas(displayWidth*factor, displayHeight*factor,P2D);
 	mid = createVector(width / 2, height/2);
 	
-	
-	btnNewBranch = createButton("Neue Abzweigungen");
-	btnNewBranch.mousePressed(addNewBranches);
-	
-	btnClear = createButton("Neu beginnen");
-	btnClear.mousePressed(clearFractalTree);
-	
-	sldStartLength = createSlider(10,200, 100, 1);
-	sldBranches = createSlider(2,4,2,1);
-	sldRootAmount = createSlider(1,3,1,1);
-	
-	var container = createDiv('');
-	container.child(btnNewBranch);
-	container.child(sldBranches);
-	
-	container = createDiv('');
-	container.child(btnClear);
-	container.child(sldStartLength);
-	container.child(sldRootAmount);
-	
-	
+	constructUI();
 	createRoots();
-	
 }
 function draw() {
 	background(51);
@@ -58,14 +38,50 @@ function clearFractalTree(){
 }
 function createRoots(){
 	var rootAmount = sldRootAmount.value();
+	var rootLength = sldStartLength.value();
+	var rotateAngle = TWO_PI/rootAmount;
 	roots = new Array();
 	for(var i = 1;i <= rootAmount;i++){
 		var begin = mid.copy();
-		var end = mid.copy().sub(0, sldStartLength.value()/2);
-		end.rotate(TWO_PI/i);
-		roots.push(new Branch(begin, end));
+		var end = mid.copy().sub(0, rootLength/2);
+		var dir = end.sub(begin);
+		dir.normalize();
+		dir.rotate(rotateAngle*i);
+		dir.mult(sldStartLength.value());
+		end = p5.Vector.add(begin, dir);
+		roots.push(new Branch(begin, end, null));
 	}
 	lastGeneratedBranches = roots;
+}
+
+function constructUI(){
+	btnNewBranch = createButton("Neue Abzweigungen");
+	btnNewBranch.mousePressed(addNewBranches);
+	btnNewBranch.class(controlClass);
+	
+	sldBranches = createSlider(2,4,2,1);
+	sldBranches.class(controlClass);
+	
+	var container = createDiv('');
+	container.class(containerClass);
+	container.child(btnNewBranch);
+	container.child(sldBranches);
+	
+	btnClear = createButton("Neu beginnen");
+	btnClear.mousePressed(clearFractalTree);
+	btnClear.class(controlClass);
+	
+	sldStartLength = createSlider(10,200, 100, 1);
+	sldStartLength.class(controlClass);
+	
+	sldRootAmount = createSlider(1,3,1,1);
+	sldRootAmount.class(controlClass);
+	
+	container = createDiv('');
+	container.class(containerClass);
+	container.child(btnClear);
+	container.child(sldStartLength);
+	container.child(sldRootAmount);
 }
 
 
