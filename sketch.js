@@ -2,25 +2,23 @@ var roots;
 var lastGeneratedBranches;
 var mid;
 
+var canvasFactor = 0.7;
 var btnNewBranch, sldBranches;
 var btnClear, sldStartLength, sldRootAmount;
 var controlClass = "control-default";
 var containerClass = "control-container";
 
 function setup() {
-	var factor = 0.7;
-	createCanvas(displayWidth*factor, displayHeight*factor,P2D);
-	mid = createVector(width / 2, height/2);
-	
-	constructUI();
+	buildUI();
 	createRoots();
 }
 function draw() {
-	background(51);
+	background(50);
 
 	for(var root of roots){
 		root.show();
 	}
+	showRootPoint();
 }
 
 function addNewBranches(){
@@ -32,9 +30,6 @@ function addNewBranches(){
 		}
 	}
 	lastGeneratedBranches = temp;
-}
-function clearFractalTree(){
-	createRoots();
 }
 function createRoots(){
 	var rootAmount = sldRootAmount.value();
@@ -49,12 +44,20 @@ function createRoots(){
 		dir.rotate(rotateAngle*i);
 		dir.mult(sldStartLength.value());
 		end = p5.Vector.add(begin, dir);
-		roots.push(new Branch(begin, end, null));
+		roots.push(new Branch(begin, end, 255));
 	}
 	lastGeneratedBranches = roots;
 }
+function showRootPoint(){
+	fill(0);
+	noStroke();
+	ellipse(mid.x,mid.y,10);
+}
 
-function constructUI(){
+function buildUI(){
+	createCanvas(displayWidth*canvasFactor, displayHeight*canvasFactor,P2D);
+	mid = createVector(width / 2, height/2);
+	
 	btnNewBranch = createButton("Neue Abzweigungen");
 	btnNewBranch.mousePressed(addNewBranches);
 	btnNewBranch.class(controlClass);
@@ -68,13 +71,13 @@ function constructUI(){
 	container.child(sldBranches);
 	
 	btnClear = createButton("Neu beginnen");
-	btnClear.mousePressed(clearFractalTree);
+	btnClear.mousePressed(createRoots);
 	btnClear.class(controlClass);
 	
 	sldStartLength = createSlider(10,200, 100, 1);
 	sldStartLength.class(controlClass);
 	
-	sldRootAmount = createSlider(1,3,1,1);
+	sldRootAmount = createSlider(1,8,1,1);
 	sldRootAmount.class(controlClass);
 	
 	container = createDiv('');

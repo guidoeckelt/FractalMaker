@@ -1,13 +1,14 @@
-function Branch(begin, end, parent) {
+function Branch(begin, end, color) {
 	this.begin = begin;
 	this.end = end;
 	this.lengthFactor = 0.8;
+	this.color = color;
 
 	this.subBranches = new Array();
-	this.parent = parent;
+	this.parent;
 
 	this.show = function() {
-		stroke(255);
+		stroke(255,255,this.color);
 		line(this.begin.x, this.begin.y, this.end.x, this.end.y);
 		for(var subbranch of this.subBranches){
 			subbranch.show();
@@ -21,12 +22,20 @@ function Branch(begin, end, parent) {
 			dir.rotate(rotateAngle);
 			dir.mult(this.lengthFactor);
 			var newEnd = p5.Vector.add(this.end, dir);
-			this.subBranches.push(new Branch(this.end, newEnd, this));
+			var subColor = this.color>10? this.color - 10: 5;
+			var subBranch = new Branch(this.end, newEnd, subColor);
+			subBranch.parent = this;
+			this.subBranches.push(subBranch);
 		}
 		return this.subBranches;
 	};
 	
 	this.getRotateAngle = function(current, max){
+		var angle = ((TWO_PI/max)*current);
+		if(max%2==0){
+			angle += ((TWO_PI/max)/2);
+		}
+		return angle;
 		var angleFraction;
 		switch(max){
 			case 2: 
@@ -55,6 +64,6 @@ function Branch(begin, end, parent) {
 				} break;
 			default: 
 		}
-		return (PI / angleFraction);
+		return PI/angleFraction;
 	};
 }
