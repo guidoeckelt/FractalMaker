@@ -35,7 +35,7 @@ function Branch(begin, end, color) {
 		if(max%2==0){
 			angle += ((TWO_PI/max)/2);
 		}
-		return angle;
+		//return angle;
 		var angleFraction;
 		switch(max){
 			case 2: 
